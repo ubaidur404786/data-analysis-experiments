@@ -27,31 +27,33 @@ All numbers below come straight from the saved notebook outputs.
 
 **A/B test on 90,189 players (Cookie Cats mobile game, gate at level 30 vs level 40)**
 
-| What I checked                   | Result                                                                                                        |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Day-7 retention (primary metric) | 19.02% vs 18.20%, a drop of 0.82 points (−4.3% relative), z = −3.16, p = 0.0016, 95% CI [−1.33, −0.31] points |
-| Bootstrap check                  | gate 30 had higher day-7 retention in 99.8% of bootstrap samples                                              |
-| Day-1 retention                  | −0.59 points, p = 0.074, not significant                                                                      |
-| Sample ratio mismatch            | split was 49.56% / 50.44%, chi-square p = 0.0086, flagged as a limitation                                     |
-| Data cleaning                    | 1 extreme outlier removed (49,854 rounds played)                                                              |
-| Multiple metrics                 | only day-7 retention stays significant after Bonferroni correction (α = 0.0167)                               |
-| Business impact                  | about 8,200 fewer players still active on day 7 per 1 million installs (range 3,100 to 13,300)                |
-| Decision                         | keep the gate at level 30                                                                                     |
+| What I checked | Result | Notebook |
+| --- | --- | --- |
+| Sample size and power | detecting a 1-point change in day-7 retention needs 23,664 players per group (80% power, α = 0.05) | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
+| Sample ratio mismatch | split was 49.56% / 50.44%, chi-square p = 0.0086, flagged as a limitation | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
+| Data cleaning | 1 extreme outlier removed (49,854 rounds played) | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
+| Day-7 retention (primary metric) | 19.02% vs 18.20%, a drop of 0.82 points (−4.3% relative), z = −3.16, p = 0.0016, 95% CI [−1.33, −0.31] points | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Bootstrap check | gate 30 had higher day-7 retention in 99.8% of bootstrap samples | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Day-1 retention | −0.59 points, p = 0.074, not significant | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Multiple metrics | only day-7 retention stays significant after Bonferroni correction (α = 0.0167) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Business impact | about 8,200 fewer players still active on day 7 per 1 million installs (range 3,100 to 13,300) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Decision | keep the gate at level 30 | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
 
-**Pitfalls, measured by simulation**
+**Pitfalls, measured by simulation** (notebook: [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb))
 
-- Checking the p-value every day and stopping at p < 0.05 raised the false alarm rate from 4.8% to 25.2%.
-- With only 3,000 users per group, power was 13.1%, and the "significant" results overstated the true effect about 3 times (2.5 points instead of 0.8).
-- Detecting a 1-point change in day-7 retention needs 23,664 players per group (80% power, α = 0.05).
+- **Peeking:** checking the p-value every day and stopping at p < 0.05 raised the false alarm rate from 4.8% to 25.2%.
+- **Too-small samples:** with only 3,000 users per group, power was 13.1%, and the "significant" results overstated the true effect about 3 times (2.5 points instead of 0.8).
 
 **Statistics**
 
-- Titanic: survival rate was 74.2% for women and 18.9% for men (chi-square = 263.1, p = 3.7e-59, Cramér's V = 0.54).
-- Palmer penguins: species explains 67% of the variation in body mass (ANOVA F = 341.9, η² = 0.67). Tukey's test shows Gentoo are about 1,380 g heavier, while Adelie and Chinstrap do not differ (p = 0.92).
-- Simpson's paradox: bill length and bill depth look negatively related overall (r = −0.23) but are positively related inside every species (r = 0.39 to 0.65).
-- A single typo in the data dropped Pearson's r from 0.873 to 0.221, while Spearman's rho barely moved (0.840 to 0.824).
-- The same drug data gave p = 0.079 with the wrong (independent) t-test and p = 0.003 with the right (paired) one.
-- The top 20% of players played 74% of all game rounds. The central limit theorem simulation took that skewness from 6.0 down to 0.52 for sample means of size 200.
+| Topic | Result | Notebook |
+| --- | --- | --- |
+| Chi-square test of independence | Titanic survival was 74.2% for women and 18.9% for men (chi-square = 263.1, p = 3.7e-59, Cramér's V = 0.54) | [Probability](01_statistics/04_probability.ipynb), [Other statistical tests](02_experimentation/03_other_statistical_tests.ipynb) |
+| ANOVA and Tukey post-hoc | species explains 67% of the variation in penguin body mass (F = 341.9, η² = 0.67); Gentoo are about 1,380 g heavier, while Adelie and Chinstrap do not differ (p = 0.92) | [ANOVA](01_statistics/09_anova.ipynb) |
+| Simpson's paradox | bill length and bill depth look negatively related overall (r = −0.23) but are positively related inside every species (r = 0.39 to 0.65) | [Covariance and correlation](01_statistics/07_covariance_and_correlation.ipynb) |
+| Pearson vs Spearman | a single typo dropped Pearson's r from 0.873 to 0.221, while Spearman's rho barely moved (0.840 to 0.824) | [Covariance and correlation](01_statistics/07_covariance_and_correlation.ipynb) |
+| Paired vs independent t-test | the same drug data gave p = 0.079 with the wrong (independent) test and p = 0.003 with the right (paired) one | [Other statistical tests](02_experimentation/03_other_statistical_tests.ipynb) |
+| Pareto rule and central limit theorem | the top 20% of players played 74% of all game rounds; sample means of size 200 brought the skewness from 6.0 down to 0.52 | [Other distributions and the CLT](01_statistics/08_other_distributions_and_clt.ipynb) |
 
 ## Contents
 
