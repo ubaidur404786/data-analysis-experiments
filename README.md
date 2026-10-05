@@ -1,25 +1,14 @@
-# Data Analysis Experiments
+# A/B Testing & Statistics Case Studies
 
-This repository is a set of experiments I did to test and deepen my own data analysis skills for data science. I took the core topics (statistics, A/B testing, statistical tests and estimation) and worked through each one on real public datasets, from the formula by hand up to the Python code and the final decision.
+End-to-end analysis of a 90,189-player mobile-game A/B test, plus statistics and regression case studies on real public data. Every result is worked out by hand first, then checked in Python.
 
-## Why I made it
+**Python · pandas · NumPy · SciPy · statsmodels · Matplotlib · seaborn · Jupyter**
 
-Most tutorials show one line of library code and a p-value. I wanted to understand what happens underneath: where each formula comes from, why it works, when it breaks, and how to explain the result to someone who is not technical. So for every concept I calculated it by hand first, then checked that Python gives the same number.
+## Headline result
 
-Along the way I found real issues in the data and wrote them down instead of hiding them, for example a sample ratio mismatch in an A/B test and a sampling problem in the Titanic file.
+Moving the first gate in the mobile game Cookie Cats from level 30 to level 40 **lowered day-7 retention from 19.02% to 18.20%** (p = 0.0016). That is about **8,200 fewer active players per 1 million installs**. Decision: **keep the gate at level 30**.
 
-## Why it is good for beginners
-
-If you are new to data science, this repo is written for you:
-
-- **Simple language.** Every term is explained the first time it appears. No advanced maths or Python is needed.
-- **Same order for every concept:** theory → formula → small example → manual calculation → code → output and interpretation. You always know what comes next.
-- **Small examples first, real data second.** You see the idea on 5 numbers before seeing it on 90,000 rows.
-- **Real public datasets,** saved in the repo, so everything runs offline without any account.
-- **Links to read more** at the difficult parts, and links to the documentation of every library function used.
-- **Honest results.** When a test is not significant, or the data has a problem, the notebook says so and explains why it matters.
-
-<!-- Colour guide used in the notebooks: $\color{red}{\text{red}}$ = reject the null hypothesis / warning / wrong reading, $\color{green}{\text{green}}$ = fail to reject / passed check / correct reading. Lines starting with a grey bar (quote blocks) hold the definitions and key ideas. -->
+Before trusting that number, the analysis checks power and sample size, flags a sample ratio mismatch, removes an extreme outlier, confirms the result with a bootstrap, and corrects for testing several metrics at once.
 
 ## Key results
 
@@ -29,20 +18,29 @@ All numbers below come straight from the saved notebook outputs.
 
 | What I checked | Result | Notebook |
 | --- | --- | --- |
+| Day-7 retention (primary metric) | 19.02% vs 18.20%, a drop of 0.82 points (−4.3% relative), z = −3.16, p = 0.0016, 95% CI [−1.33, −0.31] points | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Business impact | about 8,200 fewer players still active on day 7 per 1 million installs (range 3,100 to 13,300) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Decision | keep the gate at level 30 | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Bootstrap check | gate 30 had higher day-7 retention in 99.8% of bootstrap samples | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Multiple metrics | only day-7 retention stays significant after Bonferroni correction (α = 0.0167) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Day-1 retention | −0.59 points, p = 0.074, not significant | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
 | Sample size and power | detecting a 1-point change in day-7 retention needs 23,664 players per group (80% power, α = 0.05) | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
 | Sample ratio mismatch | split was 49.56% / 50.44%, chi-square p = 0.0086, flagged as a limitation | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
 | Data cleaning | 1 extreme outlier removed (49,854 rounds played) | [A/B part 1: design and checks](02_experimentation/01_ab_testing_part1_design_and_checks.ipynb) |
-| Day-7 retention (primary metric) | 19.02% vs 18.20%, a drop of 0.82 points (−4.3% relative), z = −3.16, p = 0.0016, 95% CI [−1.33, −0.31] points | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
-| Bootstrap check | gate 30 had higher day-7 retention in 99.8% of bootstrap samples | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
-| Day-1 retention | −0.59 points, p = 0.074, not significant | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
-| Multiple metrics | only day-7 retention stays significant after Bonferroni correction (α = 0.0167) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
-| Business impact | about 8,200 fewer players still active on day 7 per 1 million installs (range 3,100 to 13,300) | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
-| Decision | keep the gate at level 30 | [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb) |
+| Same test as a regression | logistic regression gives odds ratio 0.947 (95% CI [0.916, 0.980]) and the same p = 0.0016. "Controlling" for rounds played (a post-treatment variable) would wrongly inflate the effect by 50% | [Logistic regression](01_statistics/11_logistic_regression.ipynb) |
 
 **Pitfalls, measured by simulation** (notebook: [A/B part 2: analysis and decision](02_experimentation/02_ab_testing_part2_analysis_and_decision.ipynb))
 
 - **Peeking:** checking the p-value every day and stopping at p < 0.05 raised the false alarm rate from 4.8% to 25.2%.
 - **Too-small samples:** with only 3,000 users per group, power was 13.1%, and the "significant" results overstated the true effect about 3 times (2.5 points instead of 0.8).
+
+**Regression**
+
+| Topic | Result | Notebook |
+| --- | --- | --- |
+| Linear regression and Engel's law | on 235 household budgets from 1857, income explains 83% of food spending (R² = 0.83). The log-log elasticity is 0.86 (95% CI [0.82, 0.90]): food spending grows slower than income, and the food share falls from 70% to 60% from the poorest to the richest quarter | [Linear regression](01_statistics/10_linear_regression.ipynb) |
+| Unequal spread and influential points | Breusch-Pagan p = 1.4e-25. Robust (HC3) standard errors are 4.6 times larger than the classic ones. One household moves the linear slope from 0.485 to 0.547, while the log model barely changes | [Linear regression](01_statistics/10_linear_regression.ipynb) |
+| Logistic regression | Titanic survival model with sex, class and age, fitted with Newton's method written from scratch (matches statsmodels). Odds ratio 0.08 for men and 0.08 for third class. Accuracy 78.9% vs a 59.4% baseline | [Logistic regression](01_statistics/11_logistic_regression.ipynb) |
 
 **Statistics**
 
@@ -54,6 +52,16 @@ All numbers below come straight from the saved notebook outputs.
 | Pearson vs Spearman | a single typo dropped Pearson's r from 0.873 to 0.221, while Spearman's rho barely moved (0.840 to 0.824) | [Covariance and correlation](01_statistics/07_covariance_and_correlation.ipynb) |
 | Paired vs independent t-test | the same drug data gave p = 0.079 with the wrong (independent) test and p = 0.003 with the right (paired) one | [Other statistical tests](02_experimentation/03_other_statistical_tests.ipynb) |
 | Pareto rule and central limit theorem | the top 20% of players played 74% of all game rounds; sample means of size 200 brought the skewness from 6.0 down to 0.52 | [Other distributions and the CLT](01_statistics/08_other_distributions_and_clt.ipynb) |
+
+## How the work is done
+
+- **Formula by hand, then code.** Each concept goes theory → formula → small example → manual calculation → Python → interpretation, and the notebook checks that the hand result and the library result match.
+- **Problems are reported, not hidden.** For example the sample ratio mismatch in the A/B test, a sampling problem in the Titanic file, unequal spread in the regression, and results that are not significant.
+- **Reproducible.** The data is saved in the repo, random seeds are fixed, and every notebook runs top to bottom on a fresh kernel.
+
+The notebooks are written in simple language, so they also work as a step-by-step guide if you are new to statistics: every term is explained the first time it appears, each idea is shown on 5 numbers before 90,000 rows, and links to further reading and to the documentation of every function are included.
+
+<!-- Colour guide used in the notebooks: $\color{red}{\text{red}}$ = reject the null hypothesis / warning / wrong reading, $\color{green}{\text{green}}$ = fail to reject / passed check / correct reading. Lines starting with a grey bar (quote blocks) hold the definitions and key ideas. -->
 
 ## Contents
 
@@ -70,6 +78,8 @@ All numbers below come straight from the saved notebook outputs.
 | 07  | [Covariance and correlation](01_statistics/07_covariance_and_correlation.ipynb)                                   | Covariance, Pearson, Spearman, Simpson's paradox, correlation vs causation                                                                    | Palmer penguins                         |
 | 08  | [Other distributions and the CLT](01_statistics/08_other_distributions_and_clt.ipynb)                             | Bernoulli, binomial, Poisson, log-normal, Pareto, Q-Q plots, transformations, central limit theorem                                           | Titanic, horse kicks, tips, Cookie Cats |
 | 09  | [ANOVA](01_statistics/09_anova.ipynb)                                                                             | One-way ANOVA by hand, assumptions, Welch and Kruskal-Wallis, Tukey post-hoc, effect size                                                     | Palmer penguins                         |
+| 10  | [Linear regression](01_statistics/10_linear_regression.ipynb)                                                     | Least squares by hand, R², t-test for the slope, residual checks, Breusch-Pagan, robust standard errors, log-log elasticity, Cook's distance, confidence vs prediction intervals | Engel household budgets (1857) |
+| 11  | [Logistic regression](01_statistics/11_logistic_regression.ipynb)                                                 | Odds and log-odds, sigmoid, one-variable model by hand, maximum likelihood with Newton's method from scratch, odds ratios, confusion matrix, pseudo-R², bad controls in A/B tests | Titanic, Cookie Cats |
 
 ### 2. Experimentation (`02_experimentation/`)
 
@@ -93,8 +103,8 @@ All datasets are small public files saved in [`data/`](data/), so the notebooks 
 ## How to run
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/ubaidur404786/data-analysis-experiments.git
+cd data-analysis-experiments
 pip install -r requirements.txt
 jupyter notebook
 ```
